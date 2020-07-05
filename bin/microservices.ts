@@ -5,3 +5,4 @@ import { MicroservicesStack } from '../lib/microservices-stack';
 
 const app = new cdk.App();
 new MicroservicesStack(app, 'MicroservicesStack');
+app.synth();

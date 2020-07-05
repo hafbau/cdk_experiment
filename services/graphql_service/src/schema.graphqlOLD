@@ -1,0 +1,80 @@
+scalar DateTime
+type BaseCreateResponse {
+  id: ID
+}
+
+type Query {
+  _empty: String
+}
+
+type Mutation {
+  _empty: String
+}
+
+input UpdateContactInput {
+  contactId: Int!
+  firstName: String!
+  lastName: String!
+  street: String!
+  email: String!
+}
+
+type Contact {
+  id: Int
+  firstName: String!
+  lastName: String!
+  street: String!
+  email: String!
+}
+
+extend type Mutation {
+  updateContact(input: UpdateContactInput): Boolean
+}
+extend type Query {
+  contact(contactId: Int, entityId: Int): Contact
+  listAllContacts: [Contact]
+}
+
+type Organization {
+  legalName: String
+  entityNumber: String
+  homeJurisdiction: String
+  organizationTypeId: Int
+  organizationTypeDesc: String
+  street: String!
+  businessEmail: String
+}
+
+input CreateOrganizationInput {
+  legalName: String!
+  entityNumber: String
+  homeJurisdiction: String
+  organizationTypeId: Int!
+  organizationTypeDesc: String
+  street: String!
+  businessEmail: String
+}
+
+type CreateOrganizationPayload {
+  id: Int
+}
+
+input UpdateOrganizationInput {
+  organizationId: Int!
+  street: String!
+  businessEmail: String
+}
+
+extend type Query {
+  organization(organizationId: Int!): Organization
+}
+
+extend type Mutation {
+  createOrganization(
+    input: CreateOrganizationInput
+  ): CreateOrganizationPayload
+
+  updateOrganization(
+    input: UpdateOrganizationInput
+  ): Boolean
+}
