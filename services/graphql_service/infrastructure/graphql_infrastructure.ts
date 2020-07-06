@@ -1,12 +1,16 @@
 import { join } from 'path';
 import * as cdk from '@aws-cdk/core';
 import * as lambda from '@aws-cdk/aws-lambda';
-import { CfnApiKey, PrimaryKey, Values, GraphQLApi, MappingTemplate, FieldLogLevel, AuthorizationType } from '@aws-cdk/aws-appsync';
-import { AttributeType, BillingMode, Table } from '@aws-cdk/aws-dynamodb';
+import { CfnApiKey, GraphQLApi, MappingTemplate, FieldLogLevel, AuthorizationType } from '@aws-cdk/aws-appsync';
+
+
+interface GraphQLInfrastructureProps {
+  contactService: lambda.IFunction;
+}
 
 export class GraphQLInfrastructure extends cdk.Construct {
   public readonly handler: lambda.Function;
-  constructor(scope: cdk.Construct, id: string, props: any) {
+  constructor(scope: cdk.Construct, id: string, props: GraphQLInfrastructureProps) {
     super(scope, id);
 
 
@@ -26,7 +30,23 @@ export class GraphQLInfrastructure extends cdk.Construct {
       apiId: api.apiId
     });
 
-    const noneDS = api.addNoneDataSource('None', 'Dummy data source');
+    const contactDS = api.addLambdaDataSource('ContactDS', 'Contact service as a datasource', props.contactService)
+
+    contactDS.createResolver({
+      typeName: 'Query',
+      fieldName: 'listAllContacts',
+      requestMappingTemplate: MappingTemplate.fromString(`{
+        "version": "2017-02-28",
+        "operation": "Invoke",
+        "payload": {
+          "field": "listAllContacts",
+          "arguments": $utils.toJson($context.arguments)
+       }
+     }`),
+      responseMappingTemplate: MappingTemplate.fromString(`$utils.toJson($context.result)`),
+    })
+
+    const noneDS = api.addNoneDataSource('None', 'Static data source');
 
     noneDS.createResolver({
       typeName: 'Query',
@@ -37,61 +57,6 @@ export class GraphQLInfrastructure extends cdk.Construct {
       responseMappingTemplate: MappingTemplate.fromString(JSON.stringify({
         version: 'v1',
       })),
-    });
-
-    const customerTable = new Table(this, 'CustomerTable', {
-      billingMode: BillingMode.PAY_PER_REQUEST,
-      partitionKey: {
-        name: 'id',
-        type: AttributeType.STRING,
-      },
-    });
-    const customerDS = api.addDynamoDbDataSource('Customer', 'The customer data source', customerTable);
-    customerDS.createResolver({
-      typeName: 'Query',
-      fieldName: 'getCustomers',
-      requestMappingTemplate: MappingTemplate.dynamoDbScanTable(),
-      responseMappingTemplate: MappingTemplate.dynamoDbResultList(),
-    });
-    customerDS.createResolver({
-      typeName: 'Query',
-      fieldName: 'getCustomer',
-      requestMappingTemplate: MappingTemplate.dynamoDbGetItem('id', 'id'),
-      responseMappingTemplate: MappingTemplate.dynamoDbResultItem(),
-    });
-    customerDS.createResolver({
-      typeName: 'Mutation',
-      fieldName: 'addCustomer',
-      requestMappingTemplate: MappingTemplate.dynamoDbPutItem(
-          PrimaryKey.partition('id').auto(),
-          Values.projecting('customer')),
-      responseMappingTemplate: MappingTemplate.dynamoDbResultItem(),
-    });
-    customerDS.createResolver({
-      typeName: 'Mutation',
-      fieldName: 'saveCustomer',
-      requestMappingTemplate: MappingTemplate.dynamoDbPutItem(
-          PrimaryKey.partition('id').is('id'),
-          Values.projecting('customer')),
-      responseMappingTemplate: MappingTemplate.dynamoDbResultItem(),
-    });
-    customerDS.createResolver({
-      typeName: 'Mutation',
-      fieldName: 'saveCustomerWithFirstOrder',
-      requestMappingTemplate: MappingTemplate.dynamoDbPutItem(
-          PrimaryKey
-              .partition('order').auto()
-              .sort('customer').is('customer.id'),
-          Values
-              .projecting('order')
-              .attribute('referral').is('referral')),
-      responseMappingTemplate: MappingTemplate.dynamoDbResultItem(),
-    });
-    customerDS.createResolver({
-      typeName: 'Mutation',
-      fieldName: 'removeCustomer',
-      requestMappingTemplate: MappingTemplate.dynamoDbDeleteItem('id', 'id'),
-      responseMappingTemplate: MappingTemplate.dynamoDbResultItem(),
     });
 
     const httpDS = api.addHttpDataSource('http', 'The http data source', 'https://aws.amazon.com/');
