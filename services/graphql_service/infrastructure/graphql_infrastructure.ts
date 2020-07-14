@@ -1,18 +1,19 @@
 import { join } from 'path';
 import * as cdk from '@aws-cdk/core';
 import * as lambda from '@aws-cdk/aws-lambda';
-import { CfnApiKey, GraphQLApi, MappingTemplate, FieldLogLevel, AuthorizationType } from '@aws-cdk/aws-appsync';
+import { IUserPool } from '@aws-cdk/aws-cognito';
+import { CfnApiKey, GraphQLApi, MappingTemplate, FieldLogLevel, AuthorizationType, UserPoolDefaultAction } from '@aws-cdk/aws-appsync';
 
 
 interface GraphQLInfrastructureProps {
   contactService: lambda.IFunction;
+  userPool: IUserPool;
 }
 
 export class GraphQLInfrastructure extends cdk.Construct {
   public readonly handler: lambda.Function;
   constructor(scope: cdk.Construct, id: string, props: GraphQLInfrastructureProps) {
     super(scope, id);
-
 
     const api = new GraphQLApi(this, 'Api', {
       name: `demoapi`,
@@ -21,7 +22,11 @@ export class GraphQLInfrastructure extends cdk.Construct {
       },
       authorizationConfig: {
         defaultAuthorization: {
-          authorizationType: AuthorizationType.API_KEY,
+          authorizationType: AuthorizationType.USER_POOL,
+          userPoolConfig: {
+            defaultAction: UserPoolDefaultAction.ALLOW,
+            userPool: props.userPool
+          }
         }
       },
       schemaDefinitionFile: join(__dirname, '../src/schema.graphql'),

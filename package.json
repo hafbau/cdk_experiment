@@ -23,7 +23,9 @@
   "dependencies": {
     "@aws-cdk/aws-apigateway": "^1.49.1",
     "@aws-cdk/aws-appsync": "^1.49.1",
+    "@aws-cdk/aws-cognito": "^1.49.1",
     "@aws-cdk/aws-dynamodb": "^1.49.1",
+    "@aws-cdk/aws-iam": "^1.49.1",
     "@aws-cdk/core": "^1.49.1",
     "source-map-support": "^0.5.16"
   }
