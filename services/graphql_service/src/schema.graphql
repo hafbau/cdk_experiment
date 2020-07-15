@@ -3,10 +3,8 @@ type ServiceVersion {
 }
 
 type Contact {
-  id: Int
-  firstName: String!
-  lastName: String!
-  street: String!
+  firmId: Int
+  contactId: Int
   email: String!
 }
 

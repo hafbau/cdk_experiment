@@ -31,24 +31,32 @@ export class GraphQLInfrastructure extends cdk.Construct {
       },
       schemaDefinitionFile: join(__dirname, '../src/schema.graphql'),
     });
-    const apiKey = new CfnApiKey(this, 'graphql-service-api-key', {
-      apiId: api.apiId
-    });
 
     const contactDS = api.addLambdaDataSource('ContactDS', 'Contact service as a datasource', props.contactService)
 
     contactDS.createResolver({
       typeName: 'Query',
       fieldName: 'listAllContacts',
-      requestMappingTemplate: MappingTemplate.fromString(`{
+      requestMappingTemplate: MappingTemplate.fromString(`
+      #**
+        The value of 'payload' after the template has been evaluated
+        will be passed as the event to AWS Lambda.
+      *#
+      {
         "version": "2017-02-28",
         "operation": "Invoke",
         "payload": {
           "field": "listAllContacts",
-          "arguments": $utils.toJson($context.arguments)
+          "arguments": $util.toJson($context.arguments),
+          "identity": $util.toJson($context.identity)
        }
      }`),
-      responseMappingTemplate: MappingTemplate.fromString(`$utils.toJson($context.result)`),
+      responseMappingTemplate: MappingTemplate.fromString(`
+      #if($context.error)
+        $util.error($context.error.message, $context.error.type, $context.result)
+      #end
+      $util.toJson($context.result)
+      `),
     })
 
     const noneDS = api.addNoneDataSource('None', 'Static data source');
@@ -64,47 +72,9 @@ export class GraphQLInfrastructure extends cdk.Construct {
       })),
     });
 
-    const httpDS = api.addHttpDataSource('http', 'The http data source', 'https://aws.amazon.com/');
-
-    httpDS.createResolver({
-      typeName: 'Mutation',
-      fieldName: 'doPostOnAws',
-      requestMappingTemplate: MappingTemplate.fromString(`{
-        "version": "2018-05-29",
-        "method": "POST",
-        # if full path is https://api.xxxxxxxxx.com/posts then resourcePath would be /posts
-        "resourcePath": "/path/123",
-        "params":{
-            "body": $util.toJson($ctx.args),
-            "headers":{
-                "Content-Type": "application/json",
-                "Authorization": "$ctx.request.headers.Authorization"
-            }
-        }
-      }`),
-      responseMappingTemplate: MappingTemplate.fromString(`
-        ## Raise a GraphQL field error in case of a datasource invocation error
-        #if($ctx.error)
-          $util.error($ctx.error.message, $ctx.error.type)
-        #end
-        ## if the response status code is not 200, then return an error. Else return the body **
-        #if($ctx.result.statusCode == 200)
-            ## If response is 200, return the body.
-            $ctx.result.body
-        #else
-            ## If response is not 200, append the response to error block.
-            $utils.appendError($ctx.result.body, "$ctx.result.statusCode")
-        #end
-      `),
-    });
-
     // GraphQL API Endpoint
     new cdk.CfnOutput(this, 'Endpoint', {
       value: api.graphQlUrl
-    });
-    // API Key
-    new cdk.CfnOutput(this, 'API_Key', {
-      value: apiKey.attrApiKey
     });
   }
 }

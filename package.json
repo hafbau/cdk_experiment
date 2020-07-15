@@ -27,6 +27,8 @@
     "@aws-cdk/aws-dynamodb": "^1.49.1",
     "@aws-cdk/aws-iam": "^1.49.1",
     "@aws-cdk/core": "^1.49.1",
+    "aws-sdk": "^2.713.0",
+    "dynamodb-toolbox": "^0.2.0-beta",
     "source-map-support": "^0.5.16"
   }
 }

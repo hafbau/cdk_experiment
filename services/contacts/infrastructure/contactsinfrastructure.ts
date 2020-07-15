@@ -13,7 +13,8 @@ export class ContactsInfrastructure extends cdk.Construct {
     super(scope, id);
 
     const table = new dynamodb.Table(this, 'Contacts', {
-        partitionKey: { name: 'path', type: dynamodb.AttributeType.STRING }
+      partitionKey: { name: 'pk', type: dynamodb.AttributeType.STRING },
+      sortKey: { name: 'sk', type: dynamodb.AttributeType.STRING }
     });
     this.table = table;
 
@@ -22,7 +23,7 @@ export class ContactsInfrastructure extends cdk.Construct {
         handler: 'contacts.handler',
         code: lambda.Code.fromAsset(join(__dirname, '../src')),
         environment: {
-            HITS_TABLE_NAME: table.tableName
+            TABLE_ENTITY: table.tableName
         }
     });
 
