@@ -1,0 +1,18 @@
+type Contact {
+  firmId: String
+  contactId: String
+  email: String!
+}
+
+input CreateContactInput {
+    email: String!
+}
+
+type Query {
+    listAllContacts: [Contact]
+    getContactById(contactId: String): Contact
+}
+
+type Mutation {
+    createContact(input: CreateContactInput): Contact
+}

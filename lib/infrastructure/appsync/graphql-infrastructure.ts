@@ -4,6 +4,8 @@ import * as lambda from '@aws-cdk/aws-lambda';
 import { IUserPool } from '@aws-cdk/aws-cognito';
 import { CfnApiKey, GraphQLApi, MappingTemplate, FieldLogLevel, AuthorizationType, UserPoolDefaultAction } from '@aws-cdk/aws-appsync';
 
+const listOfLambdaFunctions = require('../lambda/lambdas-list');
+
 
 interface Handlers {
   [lambdaName: string]: lambda.IFunction
@@ -37,45 +39,36 @@ export class GraphQLInfrastructure extends cdk.Construct {
       schemaDefinitionFile: join(__dirname, '../../../services/graphql_service/schema.graphql'),
     });
 
-    const contactDS = api.addLambdaDataSource('ContactDS', 'Contact service as a datasource', props.lambdaSources['contacts'])
+    
+    for(const lambdaName in props.lambdaSources) {
+      const ds = api.addLambdaDataSource(`${lambdaName}DS`, lambdaName, props.lambdaSources[lambdaName]);
 
-    contactDS.createResolver({
-      typeName: 'Query',
-      fieldName: 'listAllContacts',
-      requestMappingTemplate: MappingTemplate.fromString(`
-      #**
-        The value of 'payload' after the template has been evaluated
-        will be passed as the event to AWS Lambda.
-      *#
-      {
-        "version": "2017-02-28",
-        "operation": "Invoke",
-        "payload": {
-          "field": "listAllContacts",
-          "arguments": $util.toJson($context.arguments),
-          "identity": $util.toJson($context.identity)
-       }
-     }`),
-      responseMappingTemplate: MappingTemplate.fromString(`
-      #if($context.error)
-        $util.error($context.error.message, $context.error.type, $context.result)
-      #end
-      $util.toJson($context.result)
-      `),
-    })
+      listOfLambdaFunctions[lambdaName].resolvers.forEach((resolverConfig: any) => {
+        ds.createResolver({
+          ...resolverConfig,
+          requestMappingTemplate: MappingTemplate.fromString(`
+          #**
+            The value of 'payload' after the template has been evaluated
+            will be passed as the event to AWS Lambda.
+          *#
+          {
+            "version": "2017-02-28",
+            "operation": "Invoke",
+            "payload": {
+              "args": $util.toJson($context.arguments),
+              "identity": $util.toJson($context.identity)
+           }
+         }`),
+          responseMappingTemplate: MappingTemplate.fromString(`
+          #if($context.error)
+            $util.error($context.error.message, $context.error.type, $context.result)
+          #end
+          $util.toJson($context.result)
+          `),
+        })
+      })
 
-    const noneDS = api.addNoneDataSource('None', 'Static data source');
-
-    noneDS.createResolver({
-      typeName: 'Query',
-      fieldName: 'getServiceVersion',
-      requestMappingTemplate: MappingTemplate.fromString(JSON.stringify({
-        version: '2017-02-28',
-      })),
-      responseMappingTemplate: MappingTemplate.fromString(JSON.stringify({
-        version: 'v1',
-      })),
-    });
+    }
 
     // GraphQL API Endpoint
     new cdk.CfnOutput(this, 'Endpoint', {

@@ -10,16 +10,10 @@ interface Handlers {
 
 export class LambdasInfrastructure extends cdk.Construct {
   public readonly handlers: Handlers = {};
-  public readonly table: dynamodb.Table;
 
   constructor(scope: cdk.Construct, id: string, props: any) {
     super(scope, id);
-
-    const table = new dynamodb.Table(this, 'LambdasTable', {
-      partitionKey: { name: 'pk', type: dynamodb.AttributeType.STRING },
-      sortKey: { name: 'sk', type: dynamodb.AttributeType.STRING }
-    });
-    this.table = table;
+   
 
     for(const lambdaName in listOfLambdaFunctions) {
       const { pathFromRoot, handler } = listOfLambdaFunctions[lambdaName]
@@ -28,11 +22,11 @@ export class LambdasInfrastructure extends cdk.Construct {
           handler: handler || `${lambdaName}.handler`,
           code: lambda.Code.fromAsset(join(__dirname, '../../../', pathFromRoot)),
           environment: {
-              TABLE_ENTITY: table.tableName
+              TABLE_ENTITY: props.table.tableName
           }
       });
       // grant the lambda role read/write permissions to our table
-      table.grantReadWriteData(this.handlers[lambdaName]);
+      props.table.grantReadWriteData(this.handlers[lambdaName]);
     }
 
   }
