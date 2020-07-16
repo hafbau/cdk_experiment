@@ -2,7 +2,7 @@ const { Contact } = require("./dal-dynamodb");
 exports.handler = async function (event, ctx, errCb) {
     console.log("CONTEXT", ctx)
     console.log("EVENT", event)
-    let firmId = '1';
+    let firmId = 'CONTACT1';
     try {
         let res = await Contact.query(firmId);
         // TODO - add check for isEmpty
