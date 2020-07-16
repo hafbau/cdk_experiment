@@ -1,7 +1,7 @@
 const DynamoDB = require('aws-sdk/clients/dynamodb');
 const { Table, Entity } = require('dynamodb-toolbox');
 const {
-  contacts,
+  orgs,
 } = require('./schemas')
 
 const isLocal = process.env.IS_OFFLINE; // automatically set by Dynamolocal sls plugin
@@ -29,4 +29,4 @@ function schemaEntity (schema){
   });
 };
 
-exports.Contact = schemaEntity(contacts);
+exports.Organization = schemaEntity(orgs);

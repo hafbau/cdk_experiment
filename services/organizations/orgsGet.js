@@ -1,14 +1,16 @@
-const { Contact } = require("./dal-dynamodb");
+// orgsGet.js
+
+const { Organization } = require("./dal-dynamodb");
 exports.handler = async function (event, ctx, errCb) {
-    let firmId = '1';
+    let orgId = 'CONTACT1';
     console.log('ctx.arguments from getContact :>> ', ctx.arguments);
     try {
-        let res = await Contact.query(firmId);
+        let res = await Organization.query(orgId);
         // TODO - add check for isEmpty
         return res.Items[0];
     }
     catch (e) {
         console.log(e);
-        return errCb('Cannot list all contacts');
+        return errCb('Cannot list all organizations');
     }
 };

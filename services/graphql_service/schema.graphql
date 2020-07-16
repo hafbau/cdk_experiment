@@ -4,6 +4,18 @@ type Contact {
   email: String!
 }
 
+
+
+
+type Organization {
+    orgId: String
+    firmId: String
+    name: String
+}
+
+
+
+
 input CreateContactInput {
     email: String!
 }

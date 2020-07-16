@@ -1,3 +1,5 @@
+// orgsList.js
+
 const { Contact } = require("./dal-dynamodb");
 exports.handler = async function (event, ctx, errCb) {
     console.log("CONTEXT", ctx)
