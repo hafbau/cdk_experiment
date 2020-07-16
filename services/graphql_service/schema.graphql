@@ -3,10 +3,6 @@ type Contact {
   contactId: String
   email: String!
 }
-
-
-
-
 type Organization {
     orgId: String
     firmId: String
@@ -14,17 +10,24 @@ type Organization {
 }
 
 
-
-
 input CreateContactInput {
     email: String!
 }
+input CreateOrgInput {
+    name: String
+}
+
 
 type Query {
     listAllContacts: [Contact]
     getContactById(contactId: String): Contact
+
+    listAllOrgs: [Organization]
+    getOrgById(orgId: String): Organization 
 }
 
 type Mutation {
     createContact(input: CreateContactInput): Contact
+
+    createOrg(input: CreatOrgInput): Organization
 }
