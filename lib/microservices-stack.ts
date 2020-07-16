@@ -3,7 +3,7 @@ import cognito = require('@aws-cdk/aws-cognito');
 import dynamo = require('@aws-cdk/aws-dynamodb');
 import iam = require('@aws-cdk/aws-iam');
 import { GraphQLInfrastructure } from '../services/graphql_service/infrastructure';
-import { ContactsInfrastructure } from '../services/contacts/infrastructure/contactsinfrastructure';
+const { LambdasInfrastructure } = require('./infrastructure/lambda');
 
 export class MicroservicesStack extends cdk.Stack {
   constructor(scope: cdk.Construct, id: string, props?: cdk.StackProps) {
@@ -18,10 +18,10 @@ export class MicroservicesStack extends cdk.Stack {
     });
 
     // The code that defines your stack goes here
-    const contactsInfrastructure = new ContactsInfrastructure(this, 'ContactsInfrastructure', {});
+    const lambdas = new LambdasInfrastructure(this, 'LambdasInfrastructure', {});
 
     const graphQL = new GraphQLInfrastructure(this, 'GraphQLInfrastructure', {
-      contactService: contactsInfrastructure.handler,
+      lambdaSources: lambdas.handlers,
       userPool
     });
 

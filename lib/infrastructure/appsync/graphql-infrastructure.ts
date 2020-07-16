@@ -34,7 +34,7 @@ export class GraphQLInfrastructure extends cdk.Construct {
           }
         }
       },
-      schemaDefinitionFile: join(__dirname, '../src/schema.graphql'),
+      schemaDefinitionFile: join(__dirname, '../../../services/graphql_service/schema.graphql'),
     });
 
     const contactDS = api.addLambdaDataSource('ContactDS', 'Contact service as a datasource', props.lambdaSources['contacts'])
