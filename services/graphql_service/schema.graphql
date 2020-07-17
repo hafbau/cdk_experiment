@@ -14,7 +14,7 @@ input CreateContactInput {
     email: String!
 }
 input CreateOrgInput {
-    name: String
+    name: String!
 }
 
 
@@ -29,5 +29,5 @@ type Query {
 type Mutation {
     createContact(input: CreateContactInput): Contact
 
-    createOrg(input: CreatOrgInput): Organization
+    createOrg(input: CreateOrgInput): Organization
 }

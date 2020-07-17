@@ -2,8 +2,8 @@
 const { Organization } = require("./dal-dynamodb");
 exports.handler = async function (event, ctx, errCb) {
     let org = {
-        firmId: '1',
-        contactId: Math.random().toString(16).slice(2, 8),
+        orgId: '1',
+        firmId: Math.random().toString(16).slice(2, 8),
         ...event.args.input
     }
     try {

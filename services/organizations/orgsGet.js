@@ -2,8 +2,8 @@
 
 const { Organization } = require("./dal-dynamodb");
 exports.handler = async function (event, ctx, errCb) {
-    let orgId = 'ORGS1';
-    console.log('ctx.arguments from getContact :>> ', ctx.arguments);
+    let orgId = '1';
+    console.log('event from orgsGet :>> ', event);
     try {
         let res = await Organization.query(orgId);
         // TODO - add check for isEmpty
@@ -11,6 +11,6 @@ exports.handler = async function (event, ctx, errCb) {
     }
     catch (e) {
         console.log(e);
-        return errCb('Cannot get the requested organization');
+        return errCb('Cannot get the requested organizations');
     }
 };
