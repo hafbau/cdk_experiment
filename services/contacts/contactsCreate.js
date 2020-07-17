@@ -1,13 +1,25 @@
-const { Contact } = require("dal-dynamodb");
+const uuid = require("uuid/v5");
+const { Contact, Affiliation } = require("dal-dynamodb");
+const {
+    AFFILIATE_TYPE,
+    AFFILIATION,
+    AFFILIATION_TYPE
+} = require("affiliation-types");
 exports.handler = async function (event, ctx, errCb) {
     let contact = {
-        firmId: '1',
-        contactId: Math.random().toString(16).slice(2, 8),
+        id: uuid(),
         ...event.args.input
     }
     try {
         let res = await Contact.put(contact);
-        console.log('res from put:>> ', res);
+        await Affiliation.put({
+            affiliateId: contact.id,
+            affiliateType: AFFILIATE_TYPE.CONTACT,
+            affiliatedId: '1', // firmId
+            affiliatedType: AFFILIATE_TYPE.FIRM,
+            affiliation: AFFILIATION.CONTACT_MEMBER,
+            affiliationType: AFFILIATION_TYPE.CONTACT
+        })
         // TODO - add check for isEmpty
         return contact;
     }
