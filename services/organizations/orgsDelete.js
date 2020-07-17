@@ -13,7 +13,7 @@ exports.handler = async function (event, ctx, errCb, console) {
         return key
     }
     catch (e) {
-        console.log(e);
+        // console.log(e);
         return errCb('Cannot delete organization');
     }
 };

@@ -12,7 +12,7 @@ exports.handler = async function (event, ctx, errCb) {
         return org;
     }
     catch (e) {
-        console.log(e);
+        // console.log(e);
         return errCb(`Cannot create organization   ${JSON.stringify(event.args.input)}`);
     }
 };

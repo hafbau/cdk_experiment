@@ -11,7 +11,7 @@ exports.handler = async function (event, ctx, errCb) {
         return res.Items;
     }
     catch (e) {
-        console.log(e);
+        // console.log(e);
         return errCb('Cannot list all organizations');
     }
 };

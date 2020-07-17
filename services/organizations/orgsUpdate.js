@@ -14,7 +14,7 @@ exports.handler = async function (event, ctx, errCb, console) {
         return item;
     }
     catch (e) {
-        console.log(e);
+        // console.log(e);
         return errCb('Cannot update organization');
     }
 };
