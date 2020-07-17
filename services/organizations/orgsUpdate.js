@@ -5,7 +5,7 @@ exports.handler = async function (event, ctx, errCb, console) {
         ...event.args.input
     }
     let condition = {
-        exists: true
+        // exists: true
     }
  
     try {
