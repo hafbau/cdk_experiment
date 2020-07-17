@@ -2,7 +2,8 @@
 
 const { Organization } = require("./dal-dynamodb");
 exports.handler = async function (event, ctx, errCb) {
-    let orgId = '1';
+    let orgId = 'ORG1';
+    let { ID } = {...event.args.input}
     console.log('event from orgsGet :>> ', event);
     try {
         let res = await Organization.query(orgId);

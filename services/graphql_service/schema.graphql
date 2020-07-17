@@ -3,10 +3,29 @@ type Contact {
   contactId: String
   email: String!
 }
+
+type Address {
+    addressId: ID
+    line1: String
+    line2: String 
+    line3: String 
+}
+
 type Organization {
-    orgId: String
-    firmId: String
-    name: String
+    orgId: ID!
+    firmId: ID
+    alt_address: [Address]
+    prim_address: [Address]
+    email: String
+    fax: String 
+    telephone: String 
+    creation_date: String 
+    entity_name: String
+    entity_namechange_date: String 
+    entity_namechange_reason: String 
+    entity_namechange_prev: String 
+    entity_number: Int 
+    jurisdiction: String 
 }
 
 
@@ -14,7 +33,18 @@ input CreateContactInput {
     email: String!
 }
 input CreateOrgInput {
-    name: String!
+    entity_name: String
+    email: String
+    jurisdiction: String 
+}
+input DeleteOrgInput {
+    orgId: ID 
+    firmId: String 
+}
+input UpdateOrg {
+    orgId: ID
+    firmId: String
+    entity_name: String 
 }
 
 
@@ -28,6 +58,7 @@ type Query {
 
 type Mutation {
     createContact(input: CreateContactInput): Contact
-
     createOrg(input: CreateOrgInput): Organization
+    deleteOrg(input: DeleteOrgInput): Organization 
+    updateOrg(input: UpdateOrg): Organization 
 }

@@ -6,6 +6,19 @@ exports.orgs = {
     attributes: {
         orgId: { partitionKey: true, prefix: 'ORG' },
         firmId: { sortKey: true },
-        name: { type: 'string' }
+        alt_address: { type: 'list' },
+        prim_address: { type: 'list' },
+        email: { type: 'string' },
+        fax: { type: 'string' },
+        telephone: { type: 'string' },
+        creation_date: { type: 'string' },
+        entity_name: { type: 'string' },
+        entity_namechange_date: { type: 'string' },
+        entity_namechange_reason: { type: 'string' },
+        entity_namechange_reason: { type: 'string' },
+        entity_number: { type: 'string' },
+        jurisdiction: { type: 'string' }
     }
 };
+
+

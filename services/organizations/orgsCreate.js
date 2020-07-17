@@ -8,12 +8,11 @@ exports.handler = async function (event, ctx, errCb) {
     }
     try {
         let res = await Organization.put(org);
-        console.log('res from put:>> ', res);
         // TODO - add check for isEmpty
-        return contact;
+        return org;
     }
     catch (e) {
         console.log(e);
-        return errCb('Cannot create organization');
+        return errCb(`Cannot create organization   ${JSON.stringify(event.args.input)}`);
     }
 };
