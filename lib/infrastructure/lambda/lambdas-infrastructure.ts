@@ -14,6 +14,10 @@ export class LambdasInfrastructure extends cdk.Construct {
   constructor(scope: cdk.Construct, id: string, props: any) {
     super(scope, id);
    
+    const dbUtilLayer = new lambda.LayerVersion(this, 'Db Util Layer', {
+      code: lambda.Code.fromAsset(join(__dirname, '../../../shared_services/dal_dynamodb')),
+      compatibleRuntimes: [lambda.Runtime.NODEJS_12_X]
+    })
 
     for(const lambdaName in listOfLambdaFunctions) {
       const { pathFromRoot, handler } = listOfLambdaFunctions[lambdaName]
@@ -23,7 +27,8 @@ export class LambdasInfrastructure extends cdk.Construct {
           code: lambda.Code.fromAsset(join(__dirname, '../../../', pathFromRoot)),
           environment: {
               TABLE_ENTITY: props.table.tableName
-          }
+          },
+          layers: [dbUtilLayer]
       });
       // grant the lambda role read/write permissions to our table
       props.table.grantReadWriteData(this.handlers[lambdaName]);

@@ -1,7 +1,17 @@
 type Contact {
   firmId: String
   contactId: String
-  email: String!
+  firstName: String!
+  middleName: String
+  lastName: String!
+  primaryEmail: String!
+  alternateEmail: String
+  primaryAddress: String
+  alternateAddress: String
+  residency: String
+  alias: String
+  telephone: String
+  fax: String
 }
 
 type Address {
@@ -30,7 +40,17 @@ type Organization {
 
 
 input CreateContactInput {
-    email: String!
+    firstName: String!
+    middleName: String
+    lastName: String!
+    primaryEmail: String!
+    alternateEmail: String
+    primaryAddress: String
+    alternateAddress: String
+    residency: String
+    alias: String
+    telephone: String
+    fax: String
 }
 input CreateOrgInput {
     entity_name: String
