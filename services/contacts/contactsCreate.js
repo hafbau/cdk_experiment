@@ -1,4 +1,4 @@
-const { Contact } = require("./dal-dynamodb");
+const { Contact } = require("dal-dynamodb");
 exports.handler = async function (event, ctx, errCb) {
     let contact = {
         firmId: '1',
