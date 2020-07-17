@@ -1,5 +1,5 @@
 // orgsUpdate.js 
-const { Organization } = require("./dal-dynamodb");
+const { Organization } = require("dal-dynamodb");
 exports.handler = async function (event, ctx, errCb, console) {
     let key = {
         ...event.args.input

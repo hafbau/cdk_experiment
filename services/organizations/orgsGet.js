@@ -1,6 +1,6 @@
 // orgsGet.js
 
-const { Organization } = require("./dal-dynamodb");
+const { Organization } = require("dal-dynamodb");
 exports.handler = async function (event, ctx, errCb) {
     let orgId = 'ORG1';
     let { ID } = {...event.args.input}

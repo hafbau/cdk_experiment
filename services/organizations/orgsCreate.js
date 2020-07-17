@@ -1,5 +1,5 @@
 // orgsCreate.js 
-const { Organization } = require("./dal-dynamodb");
+const { Organization } = require("dal-dynamodb");
 exports.handler = async function (event, ctx, errCb) {
     let org = {
         orgId: '1',

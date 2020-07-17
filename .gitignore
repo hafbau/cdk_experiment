@@ -2,7 +2,10 @@
 !jest.config.js
 *.d.ts
 node_modules/*
-!node_modules/dal-dynamodb
+**/node_modules/*
+!**/node_modules/affiliation-types.js
+!**/node_modules/dal-dynamodb.js
+!**/node_modules/schema.js
 
 # CDK asset staging directory
 .cdk.staging

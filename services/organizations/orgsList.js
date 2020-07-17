@@ -1,6 +1,6 @@
 // orgsList.js
 
-const { Organization } = require("./dal-dynamodb");
+const { Organization } = require("dal-dynamodb");
 exports.handler = async function (event, ctx, errCb) {
     console.log("CONTEXT", ctx)
     console.log("EVENT", event)
