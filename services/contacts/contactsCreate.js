@@ -6,20 +6,31 @@ const {
     AFFILIATION_TYPE
 } = require("affiliation-types");
 exports.handler = async function (event, ctx, errCb) {
-    let contact = {
+    const contact = {
         id: uuid(),
         ...event.args.input
     }
     try {
-        let res = await Contact.put(contact);
-        await Affiliation.put({
-            affiliateId: contact.id,
-            affiliateType: AFFILIATE_TYPE.CONTACT,
-            affiliatedId: '1', // firmId
-            affiliatedType: AFFILIATE_TYPE.FIRM,
-            affiliation: AFFILIATION.CONTACT_MEMBER,
-            affiliationType: AFFILIATION_TYPE.CONTACT
-        })
+        await Contact.put(contact)
+        .then((contactResult) => (
+            Affiliation.put({
+                affiliateId: contact.id,
+                affiliateType: AFFILIATE_TYPE.CONTACT,
+                affiliatedId: '1', // firmId
+                affiliatedType: AFFILIATE_TYPE.FIRM,
+                affiliation: AFFILIATION.CONTACT_MEMBER,
+                affiliationType: AFFILIATION_TYPE.CONTACT
+            })),
+            (contactErr) => console.error('could not create contact')
+        )
+        .then(
+            (affiliationResult) => contact,
+            (affiliationErr) => {
+                // roll back contact??
+                // await Contact.delete()
+                // throw(cannot create contact error)
+            }
+        )
         // TODO - add check for isEmpty
         return contact;
     }
